@@ -1,0 +1,20 @@
+{
+  "_comment": "Synthetic document-link occurrence records for offline sampler tests. No live key, no real publisher data: URLs are example.org placeholders, identifiers are synthetic. Country code 'AA' is deliberately not one of the real 18 (the sampler takes country as a parameter; this fixture exercises logic, not the country set). Shape mirrors what the deliverable-3 Datastore wrapper will emit: iati_identifier, recipient_country, url, declared_format, category.",
+  "occurrences": [
+    {"iati_identifier": "AA-1", "recipient_country": "AA", "url": "https://example.org/u1.pdf", "declared_format": "application/pdf", "category": "A01"},
+    {"iati_identifier": "AA-2", "recipient_country": "AA", "url": "https://example.org/u1.pdf", "declared_format": "application/pdf", "category": "A01"},
+    {"iati_identifier": "AA-3", "recipient_country": "AA", "url": "https://example.org/u1.pdf", "declared_format": "application/pdf", "category": "A01"},
+    {"iati_identifier": "AA-4", "recipient_country": "AA", "url": "https://example.org/u2.pdf", "declared_format": "application/pdf", "category": "A01"},
+    {"iati_identifier": "AA-5", "recipient_country": "AA", "url": "https://example.org/u3.pdf", "declared_format": "application/pdf", "category": "A01"},
+    {"iati_identifier": "AA-6", "recipient_country": "AA", "url": "https://example.org/u3.pdf", "declared_format": "application/pdf", "category": "A02"},
+    {"iati_identifier": "AA-7", "recipient_country": "AA", "url": "https://example.org/u4.pdf", "declared_format": "application/pdf", "category": "A02"},
+    {"iati_identifier": "AA-8", "recipient_country": "AA", "url": "https://example.org/u5.html", "declared_format": "text/html", "category": "A02"},
+    {"iati_identifier": "AA-9", "recipient_country": "AA", "url": "https://example.org/u6.pdf", "declared_format": "application/pdf", "category": "A02"},
+    {"iati_identifier": "AA-10", "recipient_country": "AA", "url": "https://example.org/u7.pdf", "declared_format": "application/pdf", "category": "B01"},
+    {"iati_identifier": "AA-11", "recipient_country": "AA", "url": "https://example.org/u8.pdf", "declared_format": "application/pdf", "category": "B01"},
+    {"iati_identifier": "AA-12", "recipient_country": "AA", "url": "https://example.org/u9.pdf", "declared_format": "application/pdf", "category": "B01"},
+    {"iati_identifier": "AA-13", "recipient_country": "AA", "url": "https://example.org/u10.pdf", "declared_format": "application/pdf", "category": "B01"},
+    {"iati_identifier": "AA-14", "recipient_country": "AA", "url": "https://example.org/u11.pdf", "declared_format": "application/pdf", "category": "__uncategorised__"},
+    {"iati_identifier": "AA-15", "recipient_country": "AA", "url": "https://example.org/u12.pdf", "declared_format": "application/pdf", "category": "__uncategorised__"}
+  ]
+}
