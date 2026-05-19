@@ -41,6 +41,8 @@ from iati_access_probe.safety import (  # noqa: E402
     DNSFailure,
     HostRateLimiter,
     RobotsCache,
+    registered_domain,
+    same_registered_domain,
 )
 
 POLICY = CrawlPolicy(per_host_interval_s=0.0, max_bytes=1000)
@@ -370,11 +372,54 @@ class TestFaultIsolation(unittest.TestCase):
         r = run("http://ex.org/a", fetcher=f, resolver=resolver_for({}))
         self.assertEqual(r.error_category, "timeout")
 
-    def test_unexpected_exception_is_isolated(self):
+    def test_unexpected_exception_is_distinct_not_connection_error(self):
+        """A crawler code defect must NOT masquerade as a dead host in the
+        resolution rates. Distinct category, diagnostic in its own field,
+        redirect_chain stays redirect-only."""
         r = self._err(ValueError("totally unexpected"))
-        self.assertEqual(r.error_category, "connection_error")
+        self.assertEqual(r.error_category, "unexpected_error")
+        self.assertEqual(r.unexpected_error_type, "ValueError")
+        self.assertEqual(r.redirect_chain, [])  # redirect hops only
+
+
+class TestElapsedArithmetic(unittest.TestCase):
+    def test_elapsed_is_end_minus_start_not_just_present(self):
+        """The injected monotonic increases, so this proves end - start is
+        actually computed, not merely that the field exists."""
+        ticks = iter([100.0, 100.75])  # start, end
+        f = ScriptedFetcher({"http://ex.org/a": StubResponse(200, {}, b"ok")})
+        r = crawl_url(
+            "http://ex.org/a",
+            policy=POLICY,
+            fetcher=f,
+            resolver=resolver_for({}),
+            robots=robots_allowing(),
+            rate_limiter=no_pace(),
+            now=lambda: "2026-05-19T00:00:00+00:00",
+            monotonic=lambda: next(ticks),
+        )
+        self.assertEqual(r.elapsed_s, 0.75)
+
+
+class TestRegisteredDomain(unittest.TestCase):
+    def test_two_label_suffix_same_and_offdomain_pair(self):
+        """Exercises the _TWO_LABEL_SUFFIXES path (plain two-label domains
+        never reach it). .com.ng is mainstream for an in-scope country."""
         self.assertEqual(
-            r.redirect_chain[-1], {"unexpected_error": "ValueError"}
+            registered_domain("docs.example.com.ng"), "example.com.ng"
+        )
+        # Same org under a two-label suffix -> same registered domain.
+        self.assertTrue(
+            same_registered_domain(
+                "https://docs.example.com.ng/a", "https://www.example.com.ng/b"
+            )
+        )
+        # Distinct orgs under the SAME two-label suffix -> off-domain, not
+        # mis-collapsed to same-domain.
+        self.assertFalse(
+            same_registered_domain(
+                "https://example.com.ng/a", "https://other.com.ng/b"
+            )
         )
 
 

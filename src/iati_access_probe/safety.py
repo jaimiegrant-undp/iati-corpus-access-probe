@@ -74,22 +74,46 @@ def host_is_public(hostname: str, resolver: Resolver) -> tuple[bool, list[str]]:
     return all_public, ips
 
 
-# A small, documented set of common multi-label public suffixes. Full
-# correctness needs the Public Suffix List (tldextract) — a package beyond
-# the SIGNAL.md stack, hence a stop-and-ask, NOT added here. This heuristic
-# is best-effort and stated as a known limit in the verdict (SIGNAL-METHOD
-# §6 best-effort framing): off-domain detection may be imperfect for exotic
-# multi-part suffixes.
+# Two-label public suffixes, covering the MAINSTREAM second-level domains of
+# all 18 in-scope partner countries plus the major donor-host TLDs
+# (UK/AU/NZ/ZA — the donor-skew means most sampled hosts are large donors,
+# Phase 0.5 §7). For these countries these suffixes are ordinary, not
+# exotic, so an off-domain redirect between two distinct orgs under e.g.
+# .com.ng must score as off-domain, not be mis-collapsed to same-domain.
+#
+# Full eTLD correctness needs the Public Suffix List (tldextract) — a
+# package beyond the SIGNAL.md stack, hence a stop-and-ask, deliberately NOT
+# added: off-domain is a reported finding, not a safety gate, so a curated
+# constant within the existing approach is the right cost/benefit. The
+# residual best-effort limit (SIGNAL-METHOD §6) is now only genuinely rare
+# multi-part suffixes outside this curated set, not mainstream ones.
 _TWO_LABEL_SUFFIXES = frozenset(
     {
+        # Major donor-host TLDs (donor-skew).
         "co.uk", "org.uk", "gov.uk", "ac.uk", "net.uk",
-        "com.au", "org.au", "net.au", "gov.au", "edu.au",
-        "co.nz", "org.nz", "govt.nz",
-        "co.za", "org.za", "gov.za",
-        "com.br", "org.br", "gov.br",
-        "co.ke", "or.ke", "go.ke",
-        "co.in", "org.in", "gov.in", "nic.in",
-        "go.ug", "or.ug", "gov.np", "org.np",
+        "com.au", "org.au", "net.au", "gov.au", "edu.au", "asn.au",
+        "co.nz", "org.nz", "net.nz", "govt.nz", "ac.nz",
+        "co.za", "org.za", "gov.za", "net.za", "ac.za",
+        # The 18 partner countries (BD BR CO FJ IN KE LR LS MD ML NG NP
+        # RW SB UG VN VU WS).
+        "com.bd", "org.bd", "net.bd", "gov.bd", "edu.bd", "ac.bd",
+        "com.br", "org.br", "gov.br", "net.br", "edu.br",
+        "com.co", "org.co", "gov.co", "net.co", "edu.co",
+        "com.fj", "org.fj", "gov.fj", "net.fj", "ac.fj",
+        "co.in", "org.in", "gov.in", "nic.in", "net.in", "ac.in", "edu.in",
+        "co.ke", "or.ke", "go.ke", "ne.ke", "ac.ke", "sc.ke",
+        "com.lr", "org.lr", "gov.lr", "net.lr", "edu.lr",
+        "co.ls", "org.ls", "gov.ls", "ac.ls",
+        "com.md", "org.md", "gov.md", "net.md",
+        "com.ml", "org.ml", "gov.ml", "net.ml",
+        "com.ng", "org.ng", "gov.ng", "net.ng", "edu.ng", "sch.ng",
+        "com.np", "org.np", "gov.np", "net.np", "edu.np",
+        "co.rw", "org.rw", "gov.rw", "net.rw", "ac.rw",
+        "com.sb", "org.sb", "gov.sb", "net.sb", "edu.sb",
+        "co.ug", "or.ug", "go.ug", "ac.ug", "ne.ug", "org.ug",
+        "com.vn", "org.vn", "gov.vn", "net.vn", "edu.vn", "ac.vn",
+        "com.vu", "org.vu", "gov.vu", "net.vu", "edu.vu",
+        "com.ws", "org.ws", "gov.ws", "net.ws", "edu.ws",
     }
 )
 

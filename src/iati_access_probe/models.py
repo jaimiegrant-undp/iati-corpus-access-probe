@@ -130,6 +130,12 @@ ACCESS_BARRIERS = (
 # `read_error` and an unparseable response as `connection_error`; there was
 # no distinct site for it. Readability/format defects are D5's
 # `extraction_outcome`, not a crawl error_category.)
+#
+# `unexpected_error` is its own category, NOT folded into
+# `connection_error`: the verdict reports resolution rates, so a crawler
+# code defect that throws on some fraction of URLs must read as a code
+# defect, not as indistinguishable network failure. The exception class
+# name is kept on `unexpected_error_type` for diagnosis.
 ERROR_CATEGORIES = (
     "dns_failure",
     "timeout",
@@ -137,6 +143,7 @@ ERROR_CATEGORIES = (
     "connection_error",
     "read_error",
     "too_many_redirects",
+    "unexpected_error",
 )
 
 
@@ -156,8 +163,15 @@ class CrawlResult:
     # Resolution / access (deliverable 4)
     http_status: int | None = None
     error_category: str | None = None  # one of ERROR_CATEGORIES, or None
+    # Set only when error_category == "unexpected_error": the exception class
+    # name, so a crawler defect is diagnosable without conflating it with a
+    # network failure. None on every other path.
+    unexpected_error_type: str | None = None
     resolved: bool = False
     final_url: str | None = None
+    # Redirect hops ONLY — {from, status, location, offdomain} per hop.
+    # Nothing else is ever appended here (was previously also carrying the
+    # unexpected-error diagnostic; that now has its own field above).
     redirect_chain: list[dict] = field(default_factory=list)
     redirect_offdomain: bool = False
     access_barrier: str = "none"

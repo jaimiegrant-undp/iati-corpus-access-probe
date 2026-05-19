@@ -127,8 +127,10 @@ def crawl_url(
     except CrawlConnectionError:
         result.error_category = "connection_error"
     except Exception as exc:  # nothing escapes — fault isolation is absolute
-        result.error_category = "connection_error"
-        result.redirect_chain.append({"unexpected_error": type(exc).__name__})
+        # A crawler code defect, NOT a network failure — kept distinct so it
+        # cannot masquerade as a dead host in the resolution rates.
+        result.error_category = "unexpected_error"
+        result.unexpected_error_type = type(exc).__name__
     finally:
         # Wall-clock for this url, recorded on every path (success, barrier,
         # or any fault) — a hung host's timeout duration is itself a finding.

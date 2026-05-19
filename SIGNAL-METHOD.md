@@ -209,6 +209,15 @@ The live crawl starts only on explicit go-ahead (CLAUDE.md process rules).
 - **`detected_format` is best-effort.** Magic-byte sniffing plus content-type
   is reliable for common formats; exotic or malformed files may be
   mis-detected. Reported as best-effort.
+- **Off-domain redirect detection is best-effort by design.** The
+  registered-domain comparison uses a curated two-label-suffix constant
+  covering the mainstream second-level domains of all 18 partner countries
+  and the major donor-host TLDs — not the full Public Suffix List (adding
+  `tldextract` was rejected as out-of-stack and disproportionate, since
+  off-domain is a reported *finding*, not a safety gate). The residual is
+  only genuinely rare multi-part suffixes outside the curated set; the
+  per-hop non-public-host SSRF check is independent of this and is not
+  best-effort.
 - **OCR detection vs OCR yield.** Detecting `ocr_needed` is reliable; the
   *recoverable* text from OCR is only estimated, and only if §4 option (b)
   or (c) is taken.
