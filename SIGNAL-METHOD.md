@@ -223,6 +223,13 @@ The live crawl starts only on explicit go-ahead (CLAUDE.md process rules).
 - **Auth/paywall is conservatively classified.** `auth_required` and
   `paywall_suspected` are inferred from response patterns and may
   under- or over-count; reported as best-effort.
+- **Non-public-host check has a residual TOCTOU window.** The host is
+  resolved once for the public-address check, then the HTTP client resolves
+  it again independently when it connects; a hostname that changes answer
+  between the two (DNS rebinding) could in principle slip the check. Accepted
+  as a residual for a polite, single-user research probe crawling public
+  publisher URLs — not closed (closing it needs pinned-IP connection, beyond
+  scope). Stated here as the honest limit.
 - **No retained corpus.** The probe does not keep documents, so it cannot be
   re-analysed for content later — Layer 2 will re-crawl its own (smaller,
   readable) sample. This is by design (the retention boundary).

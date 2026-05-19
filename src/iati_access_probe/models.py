@@ -23,7 +23,7 @@ No document content is modelled, ever.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 
 # Sentinel category for occurrences whose document-link category code is
 # missing/empty. Such occurrences are NOT dropped (that would silently bias
@@ -83,3 +83,103 @@ class CountrySample:
     @property
     def drawn_n(self) -> int:
         return len(self.sampled)
+
+
+# --- Crawl policy & result --------------------------------------------------
+# The crawl-safety parameters (SIGNAL-METHOD §2). The VALUES below are
+# conservative defaults PROPOSED for confirmation with Jaimie before the live
+# crawl (CLAUDE.md process rules) — they are not tuned for speed and are not
+# loosened autonomously. The crawler reads policy from here; the live run
+# uses the confirmed values.
+
+
+@dataclass(frozen=True, slots=True)
+class CrawlPolicy:
+    # Honest, declared User-Agent identifying IATI research tooling, with a
+    # contact. No browser-agent spoofing (SIGNAL-METHOD §2).
+    user_agent: str = (
+        "iati-corpus-access-probe/0.1 (IATI linked-document access & "
+        "readability research; contact: jaimiegrant@gmail.com)"
+    )
+    connect_timeout_s: float = 10.0
+    read_timeout_s: float = 30.0
+    max_bytes: int = 50 * 1024 * 1024  # hard file-size cap (50 MiB)
+    per_host_interval_s: float = 5.0  # polite delay between same-host hits
+    max_redirects: int = 5
+    robots_timeout_s: float = 15.0
+
+
+# Closed vocabularies (SIGNAL-METHOD §3) — keep these exact; the analysis
+# step counts on them.
+ACCESS_BARRIERS = (
+    "none",
+    "auth_required",
+    "robots_disallowed",
+    "oversize",
+    # `paywall_suspected` is NOT set by the crawler (deliverable 4): it is
+    # inferred from response/content patterns by the readability assessment
+    # (deliverable 5, SIGNAL-METHOD §3) and is best-effort (§6). It lives in
+    # the vocabulary now so the result-row schema is stable across D4/D5.
+    "paywall_suspected",
+    "non_public_host",
+)
+# Crawl-time error taxonomy. Every value here has an assignment site in
+# crawler.py — an unused category in a probe whose entire output is a
+# result-row taxonomy is a correctness smell, so the set is kept tight.
+# (`malformed_response` was removed: a torn/garbled body surfaces as
+# `read_error` and an unparseable response as `connection_error`; there was
+# no distinct site for it. Readability/format defects are D5's
+# `extraction_outcome`, not a crawl error_category.)
+ERROR_CATEGORIES = (
+    "dns_failure",
+    "timeout",
+    "tls_error",
+    "connection_error",
+    "read_error",
+    "too_many_redirects",
+)
+
+
+@dataclass
+class CrawlResult:
+    """One result row per sampled URL. Resolution/access fields are populated
+    by the crawler (deliverable 4); readability fields are filled by the
+    assessment (deliverable 5) and stay None until then.
+
+    Retention/location-safety: this row carries counts, statuses, URLs and
+    identifiers ONLY — never document content, never place names.
+    """
+
+    url: str
+    crawl_ts: str  # ISO-8601 UTC, the crawl date this figure is dated to
+
+    # Resolution / access (deliverable 4)
+    http_status: int | None = None
+    error_category: str | None = None  # one of ERROR_CATEGORIES, or None
+    resolved: bool = False
+    final_url: str | None = None
+    redirect_chain: list[dict] = field(default_factory=list)
+    redirect_offdomain: bool = False
+    access_barrier: str = "none"
+    content_type: str | None = None  # server-declared header (not trusted alone)
+    content_length: int | None = None  # declared header, if any
+    bytes_fetched: int = 0
+    elapsed_s: float = 0.0
+
+    # Readability (deliverable 5 fills these)
+    readability_pending: bool = True
+    declared_format: str | None = None  # IATI document-link format (from sample)
+    detected_format: str | None = None
+    format_match: bool | None = None
+    declared_pdf_actually_html: bool | None = None
+    extraction_outcome: str | None = None
+    extracted_char_count: int | None = None
+    usable_text: bool | None = None
+    reachable_and_readable: bool | None = None
+
+    def to_json(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_json(cls, o: dict) -> "CrawlResult":
+        return cls(**o)
