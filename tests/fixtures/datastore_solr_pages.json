@@ -1,0 +1,42 @@
+{
+  "_comment": "Canned Solr activity-collection responses for offline Datastore-wrapper tests. Synthetic: example.org URLs, synthetic identifiers, country 'AA'. Page 1 then page 2; numFound=3 across two pages of size 2 then 1. Mirrors the v3 shape: response.numFound, response.docs[], multivalued index-aligned document_link_* arrays.",
+  "page1": {
+    "responseHeader": {"status": 0},
+    "response": {
+      "numFound": 3,
+      "start": 0,
+      "docs": [
+        {
+          "iati_identifier": "AA-ACT-1",
+          "recipient_country_code": ["AA"],
+          "document_link_url": ["https://example.org/a1-d1.pdf", "https://example.org/a1-d2.pdf"],
+          "document_link_format": ["application/pdf", "application/pdf"],
+          "document_link_category_code": ["A01", "A02"]
+        },
+        {
+          "iati_identifier": "AA-ACT-2",
+          "recipient_country_code": ["AA"],
+          "document_link_url": ["https://example.org/a2-d1.html"],
+          "document_link_format": ["text/html"],
+          "document_link_category_code": ["B01"]
+        }
+      ]
+    }
+  },
+  "page2": {
+    "responseHeader": {"status": 0},
+    "response": {
+      "numFound": 3,
+      "start": 2,
+      "docs": [
+        {
+          "iati_identifier": "AA-ACT-3",
+          "recipient_country_code": ["AA"],
+          "document_link_url": ["https://example.org/a3-d1.pdf", "https://example.org/a3-d2.pdf"],
+          "document_link_format": ["application/pdf"],
+          "document_link_category_code": []
+        }
+      ]
+    }
+  }
+}
