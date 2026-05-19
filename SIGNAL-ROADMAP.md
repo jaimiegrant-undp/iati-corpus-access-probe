@@ -235,3 +235,24 @@ pre-draw extension to verify `activity_status_code` is dropped — nothing
 to verify; `verify_fields` on the five `DOCLINK_FIELDS` stands. The
 verdict must state the frame explicitly so a reader can read this probe
 against Phase 0.5/0.6 by like-for-like.
+
+**Q12. Realised draw — recorded (completes Q7).**
+*Decision (record):* The seeded draw was executed on **2026-05-19** with
+seed **`iati-access-probe-2026-05-19`** (the value anticipated by Q7).
+`verify_fields` on the five `DOCLINK_FIELDS` passed against the live
+Datastore (single probe call). Per-country sample size n=**400**
+(Q7). All 18 country frames exceeded the target, so **no country is a
+census**. Per-country frames ranged from VU=837 to BR=13,898;
+`SB`=1,250, `WS`=1,144 for the Pacific SIDS cut.
+**Total drawn pre cross-country dedup: 7,200.**
+**Union distinct URLs after cross-country dedup: 6,934.**
+**Distinct hosts in the union: 234.**
+*Rationale:* This is the fact-record of the live half of D2, made on
+Q11's confirmed Phase-0.5-faithful frame query
+(`recipient_country_code:{cc} AND document_link_url:*`).
+*Consequences:* D6 projection (`cache/projection.json`, gitignored) sits
+on these realised numbers. Hard-ceiling check (~7,000, SIGNAL-METHOD §5):
+**6,934 ≤ 7,000 — within bound, no re-scope triggered**. Per-country
+samples are written to `cache/sample/{cc}.json` (gitignored, re-drawable
+from this seed). The crawl go-ahead is the next gate; the D6 projection
+is the artefact it is decided on.
