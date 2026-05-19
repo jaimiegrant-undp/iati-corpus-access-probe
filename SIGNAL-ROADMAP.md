@@ -136,3 +136,18 @@ deployment, so it does not reach Tier 3.
 crawl-safety, and an explicit licensing posture apply from the first commit;
 tier reassessed at session close and if the probe is ever re-scoped to retain
 documents.
+
+**Q6. `usable_text` character threshold.**
+*Decision:* Open — confirm with Jaimie at the pre-crawl gate (alongside Q2).
+Default for discussion and wired as the code default: **250 characters**.
+`usable_text` = `text_extracted` AND `extracted_char_count` ≥ threshold.
+*Rationale:* SIGNAL-METHOD §3 requires the threshold be recorded here. 250
+is a deliberately conservative floor for "a real, readable document came
+back" — well below a one-paragraph report, high enough to exclude an empty
+or stub extraction. It is a parameter, not hard-coded behaviour: the
+confirmed value is injected at run time and recorded on the findings tables.
+The same threshold is the floor below which an HTML body is treated as a
+nav/landing/error stub (`not_a_document`) rather than a readable document.
+*Consequences:* Moves the `usable_text` and therefore the
+`reachable_and_readable` line; the verdict states the threshold explicitly
+and, where feasible, reports sensitivity to it.

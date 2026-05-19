@@ -109,14 +109,22 @@ For each country, and pooled:
 
 🔧 **Sprint 1 — in progress.** Access-and-readability probe.
 
-- 🔧 Scaffold & git
-- 🔧 Datastore document-link sampler
-- 🔧 Safe resumable crawler
-- 🔧 Readability assessment (format detection, text extraction, OCR detection)
+- ✅ Scaffold & git
+- ✅ Datastore document-link sampler (offline, fixture-tested)
+- ✅ Field & connector verification (thin Datastore wrapper)
+- ✅ Safe resumable crawler (offline, fixture-tested)
+- ✅ Readability assessment (format detection, text extraction, OCR-needed
+  detection — OCR *yield* gated on Q3, not built)
+- ⏸️ Cost & scale projection — **next, a stop-and-ask** (Q2 sample size,
+  Q6 usable-text threshold, distinct-URL count, wall-clock)
+- 🔧 Crawl run (live; explicit go-ahead only, after the projection)
 - 🔧 Analysis / findings tables
 - 🔧 Written verdict
 
-✅ **Working:** nothing yet — project scaffolded.
+✅ **Working (offline, no live key):** Datastore wrapper + document-link
+sampler + safe resumable crawler + readability assessment, end to end
+against fixtures. 80 tests pass. The live IATI key has not been requested
+and no live fetch has occurred — the live-key boundary holds.
 
 **Immediate next sprint:** none planned. This is a single-sprint probe; its
 output gates the chat-and-human decision on Layer 2 and the corpus build.
