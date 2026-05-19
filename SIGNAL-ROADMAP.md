@@ -1,0 +1,138 @@
+# SIGNAL-ROADMAP.md — Sprint Plan & Decisions Log
+
+*Updated: 2026-05-19*
+
+---
+
+## CURRENT SPRINT
+
+### Sprint 1 — Access-and-readability probe
+
+One sprint. Like Phase 0.5/0.6, this is a single-sprint probe.
+
+**Ordered deliverables:**
+
+1. **Scaffold & git.** Repo initialised. `.gitignore` covers `.env.local`,
+   the metric cache, the **transient document-bytes cache**, raw extracted
+   text, Python artefacts, OS/IDE files. `.env.example` documents the keys
+   (the IATI key always; an OCR API key only if §4 option (b)/(c) is later
+   chosen). `README.md` with the scope boundary, the retention boundary,
+   setup, run order. `requirements.txt` pinned.
+2. **Datastore document-link sampler.** Query the Datastore for document-link
+   metadata for the 18 countries; dedupe on URL; stratify by category; draw
+   the seeded per-country sample. Verify Datastore field names live before
+   the draw. Cache the sample. (Building the sampler is offline work; the
+   actual seeded *draw* needs the live IATI key — see the live-key note
+   under the success criteria.)
+3. **Field & connector verification.** Confirm every Datastore field name
+   used; a thin, documented Datastore wrapper with auth, pacing, loud failure
+   on an unrecognised field. (Reuses the Phase 0.5 lesson; built fresh, not
+   imported.)
+4. **Safe resumable crawler.** Implement the crawler to every binding rule in
+   SIGNAL-METHOD §2: per-host rate limiting, timeouts, declared User-Agent,
+   `robots.txt`, max file size, recorded redirects, non-public-host blocking,
+   no auth, fault isolation, resumability, untrusted-content handling. Build
+   and test its structure offline (against stubs/fixtures) before any live key
+   or live fetch.
+5. **Readability assessment.** Format detection (magic-byte + content-type),
+   text extraction per format, `ocr_needed` detection, extracted-char-count,
+   the derived `usable_text` and `reachable_and_readable` composites — all per
+   SIGNAL-METHOD §3. OCR *yield* only if §4 is resolved to option (b)/(c).
+6. **Cost & scale projection.** Before the live crawl: distinct-URL count,
+   estimated wall-clock, any per-call cost. Presented to Jaimie; live crawl
+   begins only on explicit go-ahead.
+7. **Crawl run.** Execute the crawl against the sample, resumable, one country
+   at a time if needed. Record every outcome.
+8. **Analysis / findings tables.** Read the metric cache; emit the CSV
+   findings tables — resolution, format-truth, readability, the
+   reachable-and-readable composite, and the per-country / per-publisher /
+   per-category distributions. Every rate carries its denominator and the
+   crawl date.
+9. **Written verdict.** Interpret the tables: the readable denominator, the
+   cross-country pattern (the Pacific SIDS especially), what it means for
+   Layer 2 and the corpus build, all SIGNAL-METHOD §6 limits, and the
+   licensing flag for a retained corpus.
+
+**Success criteria:**
+
+- The crawl runs end to end within the agreed pace and cost bounds, is polite
+  (no host overloaded), and is resumable from cache.
+- Every fetch outcome — success or failure — is recorded as a result row; the
+  run survives every bad URL.
+- The retention boundary holds: no retained document store; the
+  document-bytes cache is transient and gitignored; committed output is
+  counts/statuses/identifiers only, no document content, no place names.
+- Every figure traces to a defined metric, the sample, and the crawl date.
+- The verdict answers all six core questions in SIGNAL.md, distinguishes the
+  four readability sub-questions cleanly, states every §6 limit, and flags the
+  licensing question for a retained corpus.
+- The output is sufficient for a chat-and-human decision on whether, and how,
+  to proceed to Layer 2 and the corpus build.
+
+**The live-key boundary.** Deliverables 1–5 are built and tested entirely
+offline against stubs/fixtures — no live IATI key, no live fetch. The live
+IATI Datastore key is needed only to draw the actual sample (the live half of
+deliverable 2), and that draw must happen before the deliverable 6
+projection. The run order is therefore: build 1–5 offline → stop and request
+the key → draw the live sample → produce the deliverable 6 projection → stop
+for the crawl go-ahead → 7–9.
+
+**Out of scope (do not build):** Layer 2 content assessment; a retained or
+queryable document store; any tool or UI; any TRACE/Constellate integration;
+full OCR of the corpus (unless §4 is explicitly resolved that way).
+
+---
+
+## DECISIONS LOG
+
+Format: `Q[N]. Question / Decision / Rationale / Consequences`. Append only.
+
+**Q1. Country set for the probe.**
+*Decision:* The same 18 countries as Phase 0.5/0.6 (BD, BR, CO, FJ, IN, KE,
+LR, LS, MD, ML, NG, NP, RW, SB, UG, VN, VU, WS).
+*Rationale:* Consistency and comparability with the two completed baselines;
+the access picture can be read against the coverage picture for the same
+countries, including the Pacific SIDS equity cut.
+*Consequences:* Sampler iterates the fixed 18; the verdict can cross-reference
+Phase 0.5/0.6 directly.
+
+**Q2. Per-country sample size.**
+*Decision:* Open — confirm with Jaimie before the crawl. Default for
+discussion: ~300–400 distinct document URLs per country (~7,000 ceiling).
+*Rationale:* Mirrors the Phase 0.6 n≈400 logic — a usable per-country
+confidence interval while keeping the crawl bounded and polite.
+*Consequences:* Fixed before the crawl run; recorded here with the seed once
+confirmed.
+
+**Q3. OCR approach.**
+*Decision:* Open — stop-and-ask before the crawl run. Options: (a) detect
+`ocr_needed`, do not OCR; (b) OCR a sub-sample to estimate yield; (c) OCR all
+scanned files.
+*Rationale:* Detecting the scanned-image share answers most of the
+readability question; full OCR is corpus-build work and adds dependency and
+cost. (a) or (b) is the probe-appropriate scope.
+*Consequences:* Determines a dependency, a possible API key and cost line, and
+whether `reachable_and_readable` includes a measured or only an estimated OCR
+contribution.
+
+**Q4. Retention boundary.**
+*Decision:* The probe measures documents; it does not retain them. Fetched
+bytes are a transient, gitignored working cache. No permanent or queryable
+document store is built.
+*Rationale:* Retaining documents is the corpus build — a separate project
+with its own licensing and consent decisions. Keeping the probe
+non-retaining keeps it cheap, low-risk, and raises no redistribution
+question.
+*Consequences:* Committed output is metrics only. Layer 2 will draw and crawl
+its own sample rather than re-using a store from here.
+
+**Q5. Tier.**
+*Decision:* Tier 2 (vs Tier 1 for Phase 0.5/0.6).
+*Rationale:* The probe performs network egress to untrusted hosts, fetches
+and transiently caches third-party content, and runs OCR — a content-fetch
+surface materially beyond Tier 1. It remains single-user, local, no
+deployment, so it does not reach Tier 3.
+*Consequences:* Tier 2 rules on rate/spend discipline, the caching boundary,
+crawl-safety, and an explicit licensing posture apply from the first commit;
+tier reassessed at session close and if the probe is ever re-scoped to retain
+documents.

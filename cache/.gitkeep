@@ -1,0 +1,3 @@
+# Transient working cache. Everything here is gitignored and clearable at
+# any time (the retention boundary). This placeholder keeps the directory
+# present on a fresh clone; nothing else in cache/ is tracked.

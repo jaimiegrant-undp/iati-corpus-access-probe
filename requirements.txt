@@ -1,0 +1,35 @@
+# IATI Corpus Access Probe (Layer 1) — pinned dependencies.
+#
+# Every package below was verified on PyPI before pinning (CODING_GUARDRAILS
+# §10, slopsquatting is an active attack class): real package, canonical
+# source repo, widely used, Python 3.14-compatible. Verified 2026-05-19.
+#
+# No OCR library is listed. OCR is gated on Decisions Log Q3 (stop-and-ask
+# before the crawl run); a library is added only if Q3 resolves to (b)/(c).
+
+# HTTP — Datastore queries and the polite crawl. github.com/psf/requests
+requests==2.34.2
+
+# PDF text extraction. Pure-Python, no system deps. github.com/py-pdf/pypdf
+pypdf==6.11.0
+
+# HTML parsing. Used with the stdlib `html.parser` so no `lxml`/system dep.
+# www.crummy.com/software/BeautifulSoup
+beautifulsoup4==4.14.3
+
+# DOCX text extraction. github.com/python-openxml/python-docx
+python-docx==1.2.0
+
+# Magic-byte / file-signature detection, cross-checked against the
+# content-type header (the header alone is not trusted — SIGNAL-METHOD §3).
+# Pure-Python with NO external dependencies — chosen specifically to avoid a
+# system `libmagic` dependency on the Windows build host (SIGNAL.md tech
+# stack). github.com/h2non/filetype.py
+#
+# PINNED-AGAINST-RECENCY NOTE (BUILD_PLAYBOOK §8 dependency-audit discipline):
+# 1.2.0 is the current release but dates to 2022-11-02 (~3.5y). Retained
+# deliberately: very large download base, well-known author, and the file-
+# signature space it covers (PDF/DOCX/common images) is slow-moving, so
+# staleness is low-risk here. Fallback if it proves inadequate in
+# deliverable 5: `puremagic` (also pure-Python, more recently maintained).
+filetype==1.2.0

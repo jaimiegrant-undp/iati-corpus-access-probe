@@ -1,0 +1,3 @@
+# Offline test fixtures: stub Datastore responses and sample document files
+# (a text-layer PDF, a scanned-image PDF, HTML, DOCX, a malformed file, etc.)
+# used to build and test deliverables 1-5 with no live key and no live fetch.
