@@ -189,3 +189,18 @@ confirmed unchanged at the pre-crawl gate.
 *Consequences:* Wired value stands; the verdict states it and reports
 sensitivity where feasible.
 *Supersedes Q6 (was "Open — default 250").*
+
+**Q10. Crawl-safety parameters — confirmed (Jaimie sign-off).**
+*Decision:* Per-host rate limit **1 req / 5.0 s** same host; connect
+timeout **10 s**; read timeout **30 s**; hard max file size **50 MiB**;
+max redirects **5** (every hop recorded + re-safety-checked); User-Agent
+`iati-corpus-access-probe/0.1 (IATI linked-document access & readability
+research; +https://github.com/jaimiegrant-undp/iati-corpus-access-probe)`.
+*Rationale:* Polite research-crawl posture; the User-Agent is honest,
+non-spoofed, and carries a resolving public contact URL (the `+URL` form is
+conventional). These are binding crawl-safety values, signed off by Jaimie
+per CLAUDE.md process rules — not tunable for speed, not loosened
+autonomously.
+*Consequences:* Wired as the `CrawlPolicy` defaults; the live crawl uses
+exactly these. Any later change requires a fresh sign-off and a superseding
+entry. A retained-corpus re-scope would require re-confirmation.

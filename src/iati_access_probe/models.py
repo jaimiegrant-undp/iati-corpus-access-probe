@@ -95,17 +95,21 @@ class CountrySample:
 
 @dataclass(frozen=True, slots=True)
 class CrawlPolicy:
-    # Honest, declared User-Agent identifying IATI research tooling, with a
-    # contact. No browser-agent spoofing (SIGNAL-METHOD §2).
+    # CONFIRMED crawl-safety parameters (Jaimie sign-off, Decisions Log Q10).
+    # Honest, declared User-Agent identifying IATI research tooling; the
+    # `+https://...` form is the conventional way to carry a crawler contact
+    # URL. No browser-agent spoofing (SIGNAL-METHOD §2). Not loosened
+    # autonomously.
     user_agent: str = (
         "iati-corpus-access-probe/0.1 (IATI linked-document access & "
-        "readability research; contact: jaimiegrant@gmail.com)"
+        "readability research; "
+        "+https://github.com/jaimiegrant-undp/iati-corpus-access-probe)"
     )
-    connect_timeout_s: float = 10.0
-    read_timeout_s: float = 30.0
+    connect_timeout_s: float = 10.0  # connection establishment cap
+    read_timeout_s: float = 30.0  # per-read cap; hung host -> timeout row
     max_bytes: int = 50 * 1024 * 1024  # hard file-size cap (50 MiB)
     per_host_interval_s: float = 5.0  # polite delay between same-host hits
-    max_redirects: int = 5
+    max_redirects: int = 5  # each hop recorded + re-safety-checked
     robots_timeout_s: float = 15.0
 
 
