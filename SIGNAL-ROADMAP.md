@@ -204,3 +204,34 @@ autonomously.
 *Consequences:* Wired as the `CrawlPolicy` defaults; the live crawl uses
 exactly these. Any later change requires a fresh sign-off and a superseding
 entry. A retained-corpus re-scope would require re-confirmation.
+
+**Q11. Per-country frame query — confirmed (Phase 0.5-faithful, no status
+scoping).**
+*Decision:* The per-country sampling frame is
+`recipient_country_code:{cc} AND document_link_url:*` — recipient-country
+plus document-link presence, **no `activity_status_code` clause**, no other
+scope refinement. Mirrors Phase 0.5's `_present()` form exactly (`:*`, not
+`[* TO *]`) for byte-level frame-comparability.
+*Rationale:* Read-only inspection of the Phase 0.5 repo (`iati-deeper-data/
+scaffolding`, *"IATI Corpus Baseline — Phase 0.5"*) is authoritative
+(read-only by user instruction, no cross-import). It applies **no**
+activity-status filter and no base/default `fq`. Evidence:
+`harvest.py:53-55` — `_present(f)` returns `f"{f}:*"`;
+`harvest.py:67,84` — the per-country filter is exactly
+`cc = [f"recipient_country_code:{iso}"]`;
+`harvest.py` `country_metrics` — denominator `ds.count(fq=cc)` and document
+population `doc_any = ds.count(q=_present("document_link_url"), fq=cc)`;
+`country_record` records `"denominator_field": "recipient_country_code
+(activity-level)"`; `iati.py:140-160` — `query()` defaults `q="*:*"`,
+`fq=None`; full-tree scope-term scan (`status`/`valid`/`current`/
+`pipeline`/`cancelled`) across `scaffolding/*.py` returns zero
+activity-status references. Adding a status clause on its own merits was
+considered and rejected: it would diverge from the Phase 0.5/0.6 coverage
+baseline, and comparability outweighs a marginally tidier frame.
+*Consequences:* Supersedes the wording in `SIGNAL-METHOD §1.3` that
+described Phase 0.5 as "valid, current" (an inaccurate paraphrase the
+probe's docs had inherited; §1.3 corrected in the same change). The
+pre-draw extension to verify `activity_status_code` is dropped — nothing
+to verify; `verify_fields` on the five `DOCLINK_FIELDS` stands. The
+verdict must state the frame explicitly so a reader can read this probe
+against Phase 0.5/0.6 by like-for-like.

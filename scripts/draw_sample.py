@@ -60,11 +60,15 @@ DEFAULT_N = 400
 # Recorded, reproducible (Q7). Copy into Decisions Log Q7 on the real draw.
 DRAW_SEED = "iati-access-probe-2026-05-19"
 
-# Frame per country (SIGNAL-METHOD §1.3): activities recipient-tagged to the
-# country that actually carry a document link. The valid/current scope
-# refinement is a FLAGGED query-design point — see the session note; kept
-# explicit and simple here rather than silently guessed.
-COUNTRY_QUERY = "recipient_country_code:{cc} AND document_link_url:[* TO *]"
+# Frame per country (SIGNAL-METHOD §1.3, Decisions Log Q11): recipient-
+# tagged activities that carry a document link. NO activity-status / valid-
+# current scope refinement — Phase 0.5 applied none (`harvest.py:53-55,67,84`
+# in iati-deeper-data/scaffolding), and frame-comparability with the Phase
+# 0.5/0.6 coverage baseline is the binding goal. The existence predicate
+# `:*` mirrors Phase 0.5's `_present()` exactly for byte-level comparability
+# (`[* TO *]` would be functionally equivalent but diverge from the
+# baseline's literal form).
+COUNTRY_QUERY = "recipient_country_code:{cc} AND document_link_url:*"
 
 
 def _parse_env_local(path: Path) -> dict[str, str]:

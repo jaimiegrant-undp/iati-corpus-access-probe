@@ -29,10 +29,15 @@ VN, VU, WS. (Decisions Log Q1.)
 
 - The unit is the **document link**, not the activity. An activity may carry
   several document links; each is a distinct crawl target.
-- The frame, per country: document links attached to activities with that
-  recipient country, where the activity is in scope as defined for Phase 0.5
-  (valid, current). The sampler draws from the document links on those
-  activities.
+- The frame, per country: document links attached to activities tagged
+  with that recipient country. Frame-comparability with the Phase 0.5/0.6
+  coverage picture is a stated design goal (Decisions Log Q11), so the
+  per-country frame query mirrors Phase 0.5's exactly — recipient-country
+  plus document-link presence, with **no activity-status / valid-current
+  scope refinement**: Phase 0.5 applied none (`harvest.py:53-55,67,84`),
+  so neither does this probe. The full per-country query is therefore
+  `recipient_country_code:{cc} AND document_link_url:*`. The sampler draws
+  from the document links on those activities.
 - **Deduplicate on URL before sampling.** Phase 0.5 established the same
   document is linked from many activities; the access question is per *URL*,
   not per link occurrence. Sample distinct URLs. Record how many link
