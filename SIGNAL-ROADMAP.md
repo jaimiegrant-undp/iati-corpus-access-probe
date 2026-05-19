@@ -151,3 +151,41 @@ nav/landing/error stub (`not_a_document`) rather than a readable document.
 *Consequences:* Moves the `usable_text` and therefore the
 `reachable_and_readable` line; the verdict states the threshold explicitly
 and, where feasible, reports sensitivity to it.
+
+**Q7. Per-country sample size — resolved (supersedes Q2).**
+*Decision:* ~300–400 distinct document URLs per country, ~7,000 ceiling
+across the 18. A country with fewer distinct URLs than the target is a
+**census** for that country and is recorded as such on the findings table.
+*Rationale:* The Phase 0.6 n≈400 logic — a usable per-country confidence
+interval while the crawl stays bounded and polite — and it keeps the access
+picture comparable to the Phase 0.5/0.6 coverage picture for the same 18.
+*Consequences:* Fixes the distinct-URL ceiling the D6 wall-clock projection
+is built on; the seed is recorded here once the live draw is run.
+*Supersedes Q2 (was "Open").*
+
+**Q8. OCR approach — resolved (supersedes Q3): option (b).**
+*Decision:* Option **(b)** — OCR a small, **seeded, recorded, reproducible
+sub-sample** of the `ocr_needed` set to estimate recoverable-text yield.
+Explicitly **not (a)** (the Layer 1 verdict must carry a recoverable-text
+estimate, not only a scanned-share count) and explicitly **not (c)** (no
+full-set OCR — the probe sizes the corpus, it does not process it).
+*Rationale:* The verdict's `reachable_and_readable` figure is materially
+more honest with a measured OCR-yield estimate for the scanned segment than
+with that segment left entirely unquantified; full OCR is corpus-build
+work, out of scope and a retention/cost escalation.
+*Consequences:* Brings an OCR-engine dependency decision forward into the
+D6 gate (local Tesseract vs OCR API — dependency/cost trade put to Jaimie;
+no OCR library installed or imported before that confirmation). Adds an OCR
+cost line to the D6 projection. The sub-sample size and selection method
+are fixed at the D6 gate and recorded here. Must not drift toward (c)
+regardless of how large the `ocr_needed` set proves to be.
+*Supersedes Q3 (was "Open").*
+
+**Q9. `usable_text` threshold — confirmed (supersedes Q6): 250.**
+*Decision:* **250 characters**, confirmed. The `usable_text` floor and the
+HTML nav/stub `not_a_document` cutoff.
+*Rationale:* As Q6 — conservative floor for "a real, readable document";
+confirmed unchanged at the pre-crawl gate.
+*Consequences:* Wired value stands; the verdict states it and reports
+sensitivity where feasible.
+*Supersedes Q6 (was "Open — default 250").*
