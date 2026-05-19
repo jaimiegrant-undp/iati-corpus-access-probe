@@ -220,7 +220,15 @@ The live crawl starts only on explicit go-ahead (CLAUDE.md process rules).
   best-effort.
 - **OCR detection vs OCR yield.** Detecting `ocr_needed` is reliable; the
   *recoverable* text from OCR is only estimated, and only if §4 option (b)
-  or (c) is taken.
+  or (c) is taken. (b) is the resolved approach (Decisions Log Q8): a
+  seeded, recorded, capped sub-sample of the `ocr_needed` set is OCR'd to
+  estimate yield. The yield figure is a **local-Tesseract estimate** — a
+  cloud OCR engine might recover somewhat more from poor-quality scans. The
+  local estimate is acceptably conservative for a *readability* probe (it
+  does not over-state how much of the scanned segment is recoverable), and
+  the verdict must name it as a local-Tesseract figure, not an
+  engine-agnostic one. The sub-sample is pooled, not per-country, so it
+  estimates overall yield, not a per-country recoverable rate.
 - **"Readable" is not "useful".** This probe establishes that a document can
   be opened and yields text. Whether that text is substantively useful — for
   synthesis, search, or geography — is Layer 2's question, explicitly not

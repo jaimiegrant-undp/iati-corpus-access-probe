@@ -33,3 +33,26 @@ python-docx==1.2.0
 # staleness is low-risk here. Fallback if it proves inadequate in
 # deliverable 5: `puremagic` (also pure-Python, more recently maintained).
 filetype==1.2.0
+
+# --- OCR (Decisions Log Q8 = option (b): seeded sub-sample yield estimate) ---
+# Added per the D6 stop-and-ask, local-Tesseract path. Verified on PyPI
+# 2026-05-19 (CODING_GUARDRAILS §10, slopsquatting): real package,
+# canonical source repo, widely used, Python 3.14-compatible. NOT a
+# pure-Python stack — pytesseract is a thin wrapper that shells out to the
+# `tesseract` SYSTEM BINARY, which is installed on the host out-of-band
+# (not a pip dependency). The OCR-yield figure is therefore a
+# local-Tesseract estimate; the verdict names it as such (a cloud engine
+# might recover somewhat more from poor scans — SIGNAL-METHOD §6).
+
+# Python wrapper for the Tesseract-OCR engine. github.com/madmaze/pytesseract
+#
+# PINNED-AGAINST-RECENCY NOTE (BUILD_PLAYBOOK §8): 0.3.13 dates to
+# 2024-08-16 (~1.7y). Retained deliberately: it is a thin, stable
+# subprocess wrapper over the tesseract binary (the binary, not this
+# package, is where OCR behaviour lives and is versioned), very large
+# download base, long-standing maintainer. Staleness is low-risk.
+pytesseract==0.3.13
+
+# Imaging library — pytesseract takes a PIL.Image; used only to load the
+# rasterised scanned page for OCR. github.com/python-pillow/Pillow
+pillow==12.2.0
