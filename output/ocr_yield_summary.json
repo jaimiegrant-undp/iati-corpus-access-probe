@@ -1,0 +1,15 @@
+{
+  "engine": "local_tesseract",
+  "is_capped": true,
+  "mean_recoverable_chars": 32671.3,
+  "median_recoverable_chars": 7340.5,
+  "note": "Recoverable-text estimate on a seeded capped sub-sample; char counts only, no text retained. Re-fetch was required because document bytes are not retained (retention boundary).",
+  "ocr_needed_population": 156,
+  "refetch_failed_n": 0,
+  "refetched_and_ocrd_n": 150,
+  "seed": "iati-access-probe-2026-05-19",
+  "share_reaching_usable_pct": 70.0,
+  "subsample_selected": 150,
+  "subsample_target": 150,
+  "usable_text_threshold": 250
+}
