@@ -1,0 +1,6 @@
+key,count,pct_of_sample
+timeout,106,1.5
+connection_error,60,0.8
+tls_error,49,0.7
+dns_failure,7,0.1
+too_many_redirects,2,0.0

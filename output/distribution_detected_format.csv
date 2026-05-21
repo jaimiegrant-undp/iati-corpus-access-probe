@@ -1,0 +1,14 @@
+key,count,pct_of_sample
+not_fetched,2697,37.5
+text/html,2148,29.8
+application/pdf,1795,24.9
+application/vnd.oasis.opendocument.text,363,5.0
+application/vnd.openxmlformats-officedocument.wordprocessingml.document,58,0.8
+application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,56,0.8
+application/octet-stream,24,0.3
+image/jpeg,20,0.3
+application/vnd.ms-excel,16,0.2
+application/msword,9,0.1
+image/png,9,0.1
+text/plain,4,0.1
+application/zip,1,0.0

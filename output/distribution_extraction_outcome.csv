@@ -1,0 +1,6 @@
+key,count,pct_of_sample
+text_extracted,2967,41.2
+not_assessed,2697,37.5
+not_a_document,910,12.6
+extraction_failed,469,6.5
+ocr_needed,157,2.2
