@@ -107,24 +107,27 @@ For each country, and pooled:
 
 ## Build status
 
-🔧 **Sprint 1 — in progress.** Access-and-readability probe.
+✅ **Sprint 1 — complete.** Access-and-readability probe, end to end.
 
 - ✅ Scaffold & git
 - ✅ Datastore document-link sampler (offline, fixture-tested)
 - ✅ Field & connector verification (thin Datastore wrapper)
 - ✅ Safe resumable crawler (offline, fixture-tested)
-- ✅ Readability assessment (format detection, text extraction, OCR-needed
-  detection — OCR *yield* gated on Q3, not built)
-- ⏸️ Cost & scale projection — **next, a stop-and-ask** (Q2 sample size,
-  Q6 usable-text threshold, distinct-URL count, wall-clock)
-- 🔧 Crawl run (live; explicit go-ahead only, after the projection)
-- 🔧 Analysis / findings tables
-- 🔧 Written verdict
+- ✅ Readability assessment (format detection, text extraction, OCR-needed)
+- ✅ Cost & scale projection (real numbers; 6,934 distinct URLs, within bound)
+- ✅ Live sample draw (seeded, 18 countries, n=400, no censuses)
+- ✅ Crawl run (7,200 URLs; DNS-outage during ML–WS caught, cleaned, re-crawled)
+- ✅ OCR-yield estimate (Q8(b): 70% of scanned recover usable text)
+- ✅ Analysis / findings tables (`output/*.csv`)
+- ✅ Written verdict (`output/VERDICT.md`)
 
-✅ **Working (offline, no live key):** Datastore wrapper + document-link
-sampler + safe resumable crawler + readability assessment, end to end
-against fixtures. 80 tests pass. The live IATI key has not been requested
-and no live fetch has occurred — the live-key boundary holds.
+✅ **Headline result:** ~**43%** of linked documents are reachable AND
+readable (95% CI 41.9–44.2). The gap is driven by authentication walls (26%
+of all URLs), non-document pages, and `robots.txt` disallows — not link rot.
+Pacific SIDS are *not* access-disadvantaged. The corpus is 96.3%
+cross-country-distinct. 104 tests pass; all egress was Datastore-API + the
+polite publisher crawl, no retained corpus.
 
 **Immediate next sprint:** none planned. This is a single-sprint probe; its
 output gates the chat-and-human decision on Layer 2 and the corpus build.
+The retained-corpus licensing question is flagged for that decision.
