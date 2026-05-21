@@ -255,3 +255,18 @@ The live crawl starts only on explicit go-ahead (CLAUDE.md process rules).
 - **No retained corpus.** The probe does not keep documents, so it cannot be
   re-analysed for content later — Layer 2 will re-crawl its own (smaller,
   readable) sample. This is by design (the retention boundary).
+- **Local DNS outage during the crawl run (mitigated).** The crawl
+  encountered a local DNS outage on the build host during country 10 of 18
+  (Mali), with a ten-second messy onset: 43 onset-window rows interleaved
+  with the last good responses before DNS failed completely, then eight
+  subsequent countries returned 100% `dns_failure`. Against a baseline of
+  zero `dns_failure` across the first nine countries (0 of 3,600 rows), this
+  was unambiguously the host's resolver, not the publishers. The 43
+  onset-window rows were treated conservatively as outage artefacts and
+  re-crawled, not retained on weak evidence; the affected country was
+  surgically cleaned (its 354 outage `dns_failure` rows dropped, its 46
+  pre-onset measurements kept) and the remaining nine countries re-crawled
+  in full under restored network. The clean re-crawl returned a normal ~0.1%
+  `dns_failure` baseline (7 of 7,200 rows). Cleanup is documented in commit
+  history (tag `pre-cleanup-2026-05-19` preserves the tainted state); the
+  verdict's figures use only clean measurements.
